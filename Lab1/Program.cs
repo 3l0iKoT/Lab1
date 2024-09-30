@@ -9,7 +9,7 @@ namespace LabLogic
     {
         static void Main()
         {
-            int maxN = 2000;  // Максимальное значение n
+            int maxN = 5000;  // Максимальное значение n
             int numTrials = 5;  // Количество запусков для каждого n
             double x = 1.5;  // Значение x для полинома
 
@@ -33,69 +33,7 @@ namespace LabLogic
                     {
                         vector[i] = random.Next(maxN);
                     }
-                    Stopwatch stopwatch;
-                    switch (mode)
-                    {
-                        case "1":
-                            // Замер времени для постоянной функции
-                            stopwatch = Stopwatch.StartNew();
-                            ConstantFunction(vector);
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                        case "2":
-                            // Замер времени для суммы элементов
-                            stopwatch = Stopwatch.StartNew();
-                            SumFunction(vector);
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                        case "3":
-                            // Замер времени для произведения элементов
-                            stopwatch = Stopwatch.StartNew();
-                            ProductFunction(vector);
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                        case "4":
-                            // Замер времени для наивного метода вычисления полинома
-                            stopwatch = Stopwatch.StartNew();
-                            NaivePolynomial(vector, x);
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                        case "5":
-                            // Замер времени для метода Горнера
-                            stopwatch = Stopwatch.StartNew();
-                            HornerMethod(vector, x);
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                        case "6":
-                            // Замер времени для пузырьковой сортировки
-                            int[] vectorCopy = (int[])vector.Clone();
-                            stopwatch = Stopwatch.StartNew();
-                            BubbleSort(vectorCopy);
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                        case "7":
-                            // Замер времени для быстрой сортировки
-                            vectorCopy = (int[])vector.Clone();
-                            stopwatch = Stopwatch.StartNew();
-                            QuickSort(vectorCopy, 0, vectorCopy.Length - 1);
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                        case "8":
-                            // Замер времени для сортировки Timsort (Array.Sort, т.к. это его реализация)
-                            vectorCopy = (int[])vector.Clone();
-                            stopwatch = Stopwatch.StartNew();
-                            Array.Sort(vectorCopy);  // В .NET используется Timsort для массивов
-                            stopwatch.Stop();
-                            times[trial] = stopwatch.Elapsed.TotalMilliseconds;
-                            break;
-                    }
+                    times[trial] = StopWatchFunc(mode, vector, x);
                 }
 
                 // Среднее время выполнения для каждой функции
@@ -106,7 +44,69 @@ namespace LabLogic
             Console.WriteLine($"n\t{mode}");
             for (int n = 1; n <= maxN; n++)
             {
-                Console.WriteLine($"{n}\t{time[n - 1]:0.00000000000000000000}");
+                Console.WriteLine($"{time[n - 1]:0.00000000000000000000}");
+            }
+        }
+
+        public static double StopWatchFunc(string mode, int[] vector, double x)
+        {
+            Stopwatch stopwatch;
+            switch (mode)
+            {
+                case "1":
+                    // Замер времени для постоянной функции
+                    stopwatch = Stopwatch.StartNew();
+                    ConstantFunction(vector);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case "2":
+                    // Замер времени для суммы элементов
+                    stopwatch = Stopwatch.StartNew();
+                    SumFunction(vector);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case "3":
+                    // Замер времени для произведения элементов
+                    stopwatch = Stopwatch.StartNew();
+                    ProductFunction(vector);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case "4":
+                    // Замер времени для наивного метода вычисления полинома
+                    stopwatch = Stopwatch.StartNew();
+                    NaivePolynomial(vector, x);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case "5":
+                    // Замер времени для метода Горнера
+                    stopwatch = Stopwatch.StartNew();
+                    HornerMethod(vector, x);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case "6":
+                    // Замер времени для пузырьковой сортировки
+                    int[] vectorCopy = (int[])vector.Clone();
+                    stopwatch = Stopwatch.StartNew();
+                    BubbleSort(vectorCopy);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case "7":
+                    // Замер времени для быстрой сортировки
+                    vectorCopy = (int[])vector.Clone();
+                    stopwatch = Stopwatch.StartNew();
+                    QuickSort(vectorCopy, 0, vectorCopy.Length - 1);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case "8":
+                    // Замер времени для сортировки Timsort (Array.Sort, т.к. это его реализация)
+                    vectorCopy = (int[])vector.Clone();
+                    stopwatch = Stopwatch.StartNew();
+                    Array.Sort(vectorCopy);  // В .NET используется Timsort для массивов
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                default:
+                    return 0;
+
             }
         }
 
