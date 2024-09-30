@@ -19,12 +19,14 @@ using System.Windows.Shapes;
 using MahApps.Metro;
 using MahApps;
 using MahApps.Metro.Controls;
+using LabLogic;
 
 namespace labinterface
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -51,6 +53,8 @@ namespace labinterface
 
         private void DrawGraphic(object sender, RoutedEventArgs e)
         {
+            Program Logic = new Program();
+
             var plotModel = CreatePlotModel();
             var lineSeries = CreateLineSeries();
 
@@ -60,9 +64,12 @@ namespace labinterface
             // Add the axes to the plot model
             plotModel.Axes.Add(CreateLinearAxis("Time", AxisPosition.Left));
             plotModel.Axes.Add(CreateLinearAxis("Sum", AxisPosition.Bottom));
-
+            
             // Assign the plot model to the plot view
             plotView.Model = plotModel;
+            int[] aaa = new int[2];
+            //int aboba = Program.BubbleSort(aaa);
+            // plotModel.Series.Add = 
         }
 
         private PlotModel CreatePlotModel()
