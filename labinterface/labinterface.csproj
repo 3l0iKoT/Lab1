@@ -13,4 +13,8 @@
     <PackageReference Include="OxyPlot.Wpf" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lab1\Lab1.csproj" />
+  </ItemGroup>
+
 </Project>
