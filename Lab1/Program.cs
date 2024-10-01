@@ -9,13 +9,13 @@ namespace LabLogic
     {
         static void Main()
         {
-            int maxN = 5000;  // Максимальное значение n
-            int numTrials = 5;  // Количество запусков для каждого n
+            int maxN = 1000;  // Максимальное значение n
+            int numTrials = 10;  // Количество запусков для каждого n
             double x = 1.5;  // Значение x для полинома
 
             int mode = int.Parse(Console.ReadLine());
             Program program = new Program();
-            // Массивы для хранения среднего времени
+            // Массив для хранения среднего времени
             double[] time = new double[maxN];
 
             Random random = new Random();
@@ -84,30 +84,24 @@ namespace LabLogic
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 6:
-                    // Замер времени для пузырьковой сортировки
-                    int[] vectorCopy = (int[])vector.Clone();
                     stopwatch = Stopwatch.StartNew();
-                    BubbleSort(vectorCopy);
+                    BubbleSort(vector);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 7:
-                    // Замер времени для быстрой сортировки
-                    vectorCopy = (int[])vector.Clone();
                     stopwatch = Stopwatch.StartNew();
-                    QuickSort(vectorCopy, 0, vectorCopy.Length - 1);
+                    QuickSort(vector, 0, vector.Length - 1);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 8:
-                    // Замер времени для сортировки Timsort (Array.Sort, т.к. это его реализация)
-                    vectorCopy = (int[])vector.Clone();
+                    // Замер времени для сортировки Timsort
                     stopwatch = Stopwatch.StartNew();
-                    Array.Sort(vectorCopy);  // В .NET используется Timsort для массивов
+                    TimSort(vector);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 9:
-                    int[] vectorCopy2 = (int[])vector.Clone();
                     stopwatch = Stopwatch.StartNew();
-                    OddEvenSort(vectorCopy2);
+                    OddEvenSort(vector);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 10:
@@ -121,9 +115,13 @@ namespace LabLogic
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 11:
                     // Замер времени для сортировки расчёской (Comb sort)
-                    vectorCopy = (int[])vector.Clone();
                     stopwatch = Stopwatch.StartNew();
-                    CombSort(vectorCopy);
+                    CombSort(vector);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case 12:
+                    stopwatch = Stopwatch.StartNew();
+                    SelectionSort(vector);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 default:
@@ -231,6 +229,115 @@ namespace LabLogic
             array[j] = temp;
         }
 
+        //TimSort
+
+        public const int RUN = 32;
+
+        //Функция Timsort
+        public static void TimSort(int[] arr)
+        {
+            int n = arr.Length;
+
+            // Сортировка отдельных подмассивов по размеру RUN
+            for (int i = 0; i < n; i += RUN)
+                InsertionSort(arr, i,
+                              Math.Min((i + RUN - 1), (n - 1)));
+
+            // Старт Merge с размера RUN (или 32). 
+            // Оно будет объединено 
+            // до размера 64, затем 
+            // 128, 256 и так далее....
+            for (int size = RUN; size < n; size = 2 * size)
+            {
+
+                // Выбераем начальную точку левого подмассива.
+                // Мы собираемся объединить arr[left..left+size-1] и arr[left+size, left+2*size-1] 
+                // После каждого Merge мы увеличиваем 
+                // левые на 2*size
+                for (int left = 0; left < n; left += 2 * size)
+                {
+
+                    // Находим конечную точку левого подмассива
+                    // mid+1 - начальная точка правого подмассива
+                    int mid = left + size - 1;
+                    int right = Math.Min((left + 2 * size - 1),
+                                         (n - 1));
+
+                    // Слияние подмассивов arr[слева.....посередине] и arr[середина+1....справа]
+                    if (mid < right)
+                        Merge(arr, left, mid, right);
+                }
+            }
+        }
+        // Эта функция сортирует массив от левого индекса к
+        // к правому индексу, размер которого не превышает RUN
+        public static void InsertionSort(int[] arr, int left,
+                                         int right)
+        {
+            for (int i = left + 1; i <= right; i++)
+            {
+                int temp = arr[i];
+                int j = i - 1;
+                while (j >= left && arr[j] > temp)
+                {
+                    arr[j + 1] = arr[j];
+                    j--;
+                }
+                arr[j + 1] = temp;
+            }
+        }
+
+        // Функция merge объединяет отсортированные прогоны 
+        public static void Merge(int[] arr, int l, int m, int r)
+        {
+            // Исходный массив разбит на две части 
+            // левый и правый массив 
+            int len1 = m - l + 1, len2 = r - m;
+            int[] left = new int[len1];
+            int[] right = new int[len2];
+            for (int x = 0; x < len1; x++)
+                left[x] = arr[l + x];
+            for (int x = 0; x < len2; x++)
+                right[x] = arr[m + 1 + x];
+
+            int i = 0;
+            int j = 0;
+            int k = l;
+
+            // После сравнения мы объединяем эти два массива 
+            // в большиц подмассив
+            while (i < len1 && j < len2)
+            {
+                if (left[i] <= right[j])
+                {
+                    arr[k] = left[i];
+                    i++;
+                }
+                else
+                {
+                    arr[k] = right[j];
+                    j++;
+                }
+                k++;
+            }
+
+            // Копируем левые элементы если такие существуют
+            while (i < len1)
+            {
+                arr[k] = left[i];
+                k++;
+                i++;
+            }
+
+            // Копируем правые элементы если такие существуют
+            while (j < len2)
+            {
+                arr[k] = right[j];
+                k++;
+                j++;
+            }
+        }
+
         public static void OddEvenSort(int[] array)
         {
             int n = array.Length;
@@ -310,6 +417,31 @@ namespace LabLogic
         {
             gap = (gap * 10) / 13; // Уменьшаем шаг на 30%
             return gap < 1 ? 1 : gap; // Минимальный шаг равен 1
+        }
+
+        // Реализация сортировки выбором
+        static void SelectionSort(int[] arr)
+        {
+            int n = arr.Length;
+
+            // Один за другим перемещаем границу неотсортированной части массива
+            for (int i = 0; i < n - 1; i++)
+            {
+                // Находим минимальный элемент в неотсортированной части
+                int minIndex = i;
+                for (int j = i + 1; j < n; j++)
+                {
+                    if (arr[j] < arr[minIndex])
+                    {
+                        minIndex = j;
+                    }
+                }
+
+                // Обмениваем найденный минимальный элемент с первым элементом неотсортированной части
+                int temp = arr[minIndex];
+                arr[minIndex] = arr[i];
+                arr[i] = temp;
+            }
         }
     }
 }
