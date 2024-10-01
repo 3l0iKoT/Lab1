@@ -119,6 +119,13 @@ namespace LabLogic
                     MultiplyMatrices(A, B, size);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
+                case 11:
+                    // Замер времени для сортировки расчёской (Comb sort)
+                    vectorCopy = (int[])vector.Clone();
+                    stopwatch = Stopwatch.StartNew();
+                    CombSort(vectorCopy);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
                 default:
                     return 0;
             }
@@ -276,6 +283,33 @@ namespace LabLogic
             }
 
             return result;
+        }
+        public static void CombSort(int[] array)
+        {
+            int n = array.Length;
+            int gap = n;
+            bool swapped = true;
+
+            while (gap != 1 || swapped)
+            {
+                gap = GetNextGap(gap);
+                swapped = false;
+
+                for (int i = 0; i < n - gap; i++)
+                {
+                    if (array[i] > array[i + gap])
+                    {
+                        Swap(array, i, i + gap);
+                        swapped = true;
+                    }
+                }
+            }
+        }
+
+        private static int GetNextGap(int gap) // Дополнение к Comb sort
+        {
+            gap = (gap * 10) / 13; // Уменьшаем шаг на 30%
+            return gap < 1 ? 1 : gap; // Минимальный шаг равен 1
         }
     }
 }
