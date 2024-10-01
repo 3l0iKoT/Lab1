@@ -104,6 +104,12 @@ namespace LabLogic
                     Array.Sort(vectorCopy);  // В .NET используется Timsort для массивов
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
+                case 9:
+                    int[] vectorCopy2 = (int[])vector.Clone();
+                    stopwatch = Stopwatch.StartNew();
+                    OddEvenSort(vectorCopy2);
+                    stopwatch.Stop();
+                    return stopwatch.ElapsedMilliseconds;
                 default:
                     return 0;
 
@@ -209,5 +215,26 @@ namespace LabLogic
             array[i] = array[j];
             array[j] = temp;
         }
+
+        public static void OddEvenSort(int[] array)
+        {
+            int n = array.Length;
+
+            for (int i = 1; i < n - 1; i++)
+            {
+                if(array[i] > array[i + 1])
+                {
+                    Swap(array, i, i + 1);
+                }
+                for (int j = 0; j < n - 1; j++)
+                {
+                    if (array[j] > array[j + 1])
+                    {
+                        Swap(array, j, j + 1);
+                    }
+                }
+            }
+        }
+
     }
 }

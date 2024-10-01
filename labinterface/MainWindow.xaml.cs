@@ -22,6 +22,7 @@ using MahApps.Metro.Controls;
 using LabLogic;
 using ControlzEx.Standard;
 using MathNet.Numerics;
+using System.Xml.Linq;
 
 namespace labinterface
 {
@@ -40,23 +41,26 @@ namespace labinterface
         {
             var plotModel = plotView.Model as PlotModel;
             var lineSeries = CreateLineSeries2();
-           
-            double[] elements = new double[3000];
 
-            for (int i = 0; i < elements.Length; i++)
+            double[] data = new double[1000];
+            for (int i = 0; i < 999; i++)
             {
-                elements[i] = i + 1;
+                data[i] = i + 1;
+            }
+            int length = data.Length;
+            double[] elements = new double[length];
+            for (int j = 0; j < length; j++)
+            {
+                elements[j] = j + 1;
             }
 
-            double[] data = new double[3000];
-            var coefficients = Fit.Polynomial(elements, data, 3);
+            var coefficients = Fit.Polynomial(elements, data, 2);
 
-            for (int i = 0; i < data.Length; i++)
+            for (int n = 0; n < data.Length; n++)
             {
-                double value = coefficients[0] + coefficients[1] * (i + 1) + coefficients[2] * Math.Pow(i + 1, 2);
-                lineSeries.Points.Add(new DataPoint(i + 1, value));
+                double value = coefficients[0] + coefficients[1] * (n + 1) + coefficients[2] * Math.Pow(n + 1, 2);
+                lineSeries.Points.Add(new DataPoint(n + 1, value));
             }
-
             // Add the approximating line series to the plot model
             plotModel.Series.Add(lineSeries);
         }
@@ -82,7 +86,7 @@ namespace labinterface
             int function;
             if(int.TryParse(Function.Text, out function))
             {
-                if (function == 0 || function >= 9)
+                if (function == 0 || function >= 10)
                 {
                     MessageBox.Show("Такого алгоритма нет! Выберите от 1 до 8.");
                 }
