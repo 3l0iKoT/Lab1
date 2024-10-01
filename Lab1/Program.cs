@@ -12,22 +12,25 @@ namespace LabLogic
             return 1;
         }
 
-        public double SumFunction(int[] v)
+        public static double SumFunction(int[] v)
         {
             return v.Sum();
         }
 
-        public double ProductFunction(int[] v)
+        public static double ProductFunction(int[] v)
         {
+            int[] vCopy = new int[v.Length];
+            Array.Copy(v, vCopy, v.Length);
+
             double product = 1.0;
-            for (int i = 0; i < v.Length; i++)
+            for (int i = 0; i < vCopy.Length; i++)
             {
-                product *= v[i];
+                product *= vCopy[i];
             }
             return product;
         }
 
-        public double NaivePolynomial(int[] coefficients, double x)
+        public static double NaivePolynomial(int[] coefficients, double x)
         {
             double result = 0;
             int n = coefficients.Length;
@@ -41,7 +44,7 @@ namespace LabLogic
             return result;
         }
 
-        public double HornerMethod(int[] coefficients, double x)
+        public static double HornerMethod(int[] coefficients, double x)
         {
             double result = 0;
             int n = coefficients.Length;
@@ -238,13 +241,17 @@ namespace LabLogic
                 case 1:
                     return vectorOperations.ConstantFunction(vector);
                 case 2:
-                    return vectorOperations.SumFunction(vector);
+                    VectorOperations.SumFunction(vector);
+                    break;
                 case 3:
-                    return vectorOperations.ProductFunction(vector);
+                    VectorOperations.ProductFunction(vector);
+                    break;
                 case 4:
-                    return vectorOperations.NaivePolynomial(vector, x);
+                    VectorOperations.NaivePolynomial(vector, x);
+                    break;
                 case 5:
-                    return vectorOperations.HornerMethod(vector, x);
+                    VectorOperations.HornerMethod(vector, x);
+                    break;
                 case 6:
                     //int[] vectorCopy = new int[vector.Length];
                     //Array.Copy(vector, vectorCopy, vector.Length);
