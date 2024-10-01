@@ -109,10 +109,18 @@ namespace LabLogic
                     stopwatch = Stopwatch.StartNew();
                     OddEvenSort(vectorCopy2);
                     stopwatch.Stop();
-                    return stopwatch.ElapsedMilliseconds;
+                    return stopwatch.Elapsed.TotalMilliseconds;
+                case 10:
+                    // Новый режим для умножения матриц
+                    int size = vector.Length; // Размер матриц
+                    int[,] A = GenerateRandomMatrix(size); // Генерация первой матрицы
+                    int[,] B = GenerateRandomMatrix(size); // Генерация второй матрицы
+                    stopwatch = Stopwatch.StartNew();
+                    MultiplyMatrices(A, B, size);
+                    stopwatch.Stop();
+                    return stopwatch.Elapsed.TotalMilliseconds;
                 default:
                     return 0;
-
             }
         }
 
@@ -222,7 +230,7 @@ namespace LabLogic
 
             for (int i = 1; i < n - 1; i++)
             {
-                if(array[i] > array[i + 1])
+                if (array[i] > array[i + 1])
                 {
                     Swap(array, i, i + 1);
                 }
@@ -236,5 +244,38 @@ namespace LabLogic
             }
         }
 
+        public static int[,] GenerateRandomMatrix(int size)
+        {
+            Random rand = new Random();
+            int[,] matrix = new int[size, size];
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    matrix[i, j] = rand.Next(0, 21); // Случайные значения от 0 до 20
+                }
+            }
+
+            return matrix;
+        }
+
+        public static int[,] MultiplyMatrices(int[,] A, int[,] B, int size)
+        {
+            int[,] result = new int[size, size];
+
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    for (int k = 0; k < size; k++)
+                    {
+                        result[i, j] += A[i, k] * B[k, j];
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 }
