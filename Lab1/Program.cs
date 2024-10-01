@@ -296,7 +296,7 @@ namespace LabLogic
                 return matrix;
             }
 
-            public int[,] MultiplyMatrices(int[,] A, int[,] B, int size)
+            public static int[,] MultiplyMatrices(int[,] A, int[,] B, int size)
             {
                 int[,] result = new int[size, size];
 
@@ -324,12 +324,7 @@ namespace LabLogic
 
             public double StopWatchFunc(int mode, int[] vector, double x)
             {
-                //SortingAlgorithms sortingAlgorithms = new SortingAlgorithms();
-                VectorOperations vectorOperations = new VectorOperations();
-                MatrixOperations matrixOperations = new MatrixOperations();
-                int size = vector.Length; // size of matrix
-                int[,] A = MatrixOperations.GenerateRandomMatrix(size); // 1st matrix generator
-                int[,] B = MatrixOperations.GenerateRandomMatrix(size); // 2nd matrix generator
+                VectorOperations vectorOperations = new VectorOperations();                
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 switch (mode)
                 {
@@ -367,8 +362,12 @@ namespace LabLogic
                     case 12:
                         SortingAlgorithms.TimSort(vector);
                         break;
-                    case 10:
-                        matrixOperations.MultiplyMatrices(A, B, size);
+                    case 10: // here maybe bug with time m/sec
+                        //MatrixOperations matrixOperations = new MatrixOperations();
+                        int size = vector.Length; // size of matrix
+                        int[,] A = MatrixOperations.GenerateRandomMatrix(size); // 1st matrix generator
+                        int[,] B = MatrixOperations.GenerateRandomMatrix(size); // 2nd matrix generator
+                        MatrixOperations.MultiplyMatrices(A, B, size);
                         break;
                     default:
                         return 0;
