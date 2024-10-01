@@ -43,7 +43,7 @@ namespace labinterface
             var lineSeries = CreateLineSeries2();
 
             double[] data = new double[1000];
-            for (int i = 0; i < 999; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 data[i] = i + 1;
             }
@@ -86,9 +86,9 @@ namespace labinterface
             int function;
             if(int.TryParse(Function.Text, out function))
             {
-                if (function == 0 || function >= 10)
+                if (function == 0 || function > 12)
                 {
-                    MessageBox.Show("Такого алгоритма нет! Выберите от 1 до 8.");
+                    MessageBox.Show("Такого алгоритма нет! Выберите от 1 до 12.");
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace labinterface
             }
             else
             {
-                MessageBox.Show("Введите число! Выберите от 1 до 8.");
+                MessageBox.Show("Введите число! Выберите от 1 до 12.");
             }
             // Assign the plot model to the plot view
             plotView.Model = plotModel;
@@ -193,6 +193,10 @@ namespace labinterface
                 $"\n6)Пузырьковая сортировка" +
                 $"\n7)Быстрая сортировка" +
                 $"\n8)TimSort сортировка" +
+                $"\n9)OddEven сортировка" +
+                $"\n10)Умножение матриц" +
+                $"\n11)CombSort сортировка" +
+                $"\n12)SelectionSort сортировка" +
                 $"\nДиапазон - кол-во чисел для исследования функции" +
                 $"\nКол-во запусков - сколько раз запуститься алгоритм");
         }

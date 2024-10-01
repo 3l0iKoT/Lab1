@@ -84,11 +84,13 @@ namespace LabLogic
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 6:
+                    // Bubble Sort
                     stopwatch = Stopwatch.StartNew();
                     BubbleSort(vector);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 7:
+                    // Quick Sort
                     stopwatch = Stopwatch.StartNew();
                     QuickSort(vector, 0, vector.Length - 1);
                     stopwatch.Stop();
@@ -100,15 +102,16 @@ namespace LabLogic
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 9:
+                    // OddEven Sort
                     stopwatch = Stopwatch.StartNew();
                     OddEvenSort(vector);
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 10:
-                    // Новый режим для умножения матриц
-                    int size = vector.Length; // Размер матриц
-                    int[,] A = GenerateRandomMatrix(size); // Генерация первой матрицы
-                    int[,] B = GenerateRandomMatrix(size); // Генерация второй матрицы
+                    // Matrix multiply
+                    int size = vector.Length; // size of matrix
+                    int[,] A = GenerateRandomMatrix(size); // 1st matrix generator
+                    int[,] B = GenerateRandomMatrix(size); // 2nd matrix generator
                     stopwatch = Stopwatch.StartNew();
                     MultiplyMatrices(A, B, size);
                     stopwatch.Stop();
@@ -120,6 +123,7 @@ namespace LabLogic
                     stopwatch.Stop();
                     return stopwatch.Elapsed.TotalMilliseconds;
                 case 12:
+                    // Selection Sort
                     stopwatch = Stopwatch.StartNew();
                     SelectionSort(vector);
                     stopwatch.Stop();
@@ -206,6 +210,7 @@ namespace LabLogic
             }
         }
 
+        // help method for Quick Sort
         public static int Partition(int[] array, int left, int right)
         {
             double pivot = array[right];
@@ -221,7 +226,8 @@ namespace LabLogic
             Swap(array, i + 1, right);
             return i + 1;
         }
-
+        
+        // Swap method
         public static void Swap(int[] array, int i, int j)
         {
             int temp = array[i];
