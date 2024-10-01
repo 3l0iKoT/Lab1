@@ -100,7 +100,7 @@ namespace labinterface
                         for (int i = (int)0.1; i <= firstParam; i++)
                         {
                             int[] vector = Enumerable.Repeat(i, i).ToArray();
-                            double x = 3; // Replace this with the appropriate value
+                            double x = 1.5; // Replace this with the appropriate value
                             double y = Logic.StopWatchFunc(function, vector, x);
                             lineSeries.Points.Add(new DataPoint(i, y));
                         }
