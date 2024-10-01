@@ -57,7 +57,7 @@ namespace LabLogic
     }
     public class SortingAlgorithms
     {
-        public void BubbleSort(int[] array)
+        public static void BubbleSort(int[] array)
         {
             int n = array.Length;
             for (int i = 0; i < n - 1; i++)
@@ -74,7 +74,7 @@ namespace LabLogic
             }
         }
 
-        public void QuickSort(int[] array, int left, int right)
+        public static void QuickSort(int[] array, int left, int right)
         {
             if (left < right)
             {
@@ -100,7 +100,7 @@ namespace LabLogic
             return i + 1;
         }
 
-        public void OddEvenSort(int[] array)
+        public static void OddEvenSort(int[] array)
         {
             int n = array.Length;
 
@@ -120,7 +120,7 @@ namespace LabLogic
             }
         }
 
-        public void CombSort(int[] array)
+        public static void CombSort(int[] array)
         {
             int n = array.Length;
             int gap = n;
@@ -148,7 +148,7 @@ namespace LabLogic
             return gap < 1 ? 1 : gap; // Минимальный шаг равен 1
         }
 
-        public void SelectionSort(int[] arr)
+        public static void SelectionSort(int[] arr)
         {
             int n = arr.Length;
 
@@ -324,7 +324,7 @@ namespace LabLogic
 
             public double StopWatchFunc(int mode, int[] vector, double x)
             {
-                SortingAlgorithms sortingAlgorithms = new SortingAlgorithms();
+                //SortingAlgorithms sortingAlgorithms = new SortingAlgorithms();
                 VectorOperations vectorOperations = new VectorOperations();
                 MatrixOperations matrixOperations = new MatrixOperations();
                 int size = vector.Length; // size of matrix
@@ -350,19 +350,19 @@ namespace LabLogic
                     case 6:
                         //int[] vectorCopy = new int[vector.Length];
                         //Array.Copy(vector, vectorCopy, vector.Length);
-                        sortingAlgorithms.BubbleSort(vector);
+                        SortingAlgorithms.BubbleSort(vector);
                         break;
                     case 7:
-                        sortingAlgorithms.QuickSort(vector, 0, vector.Length - 1);
+                        SortingAlgorithms.QuickSort(vector, 0, vector.Length - 1);
                         break;
                     case 8:
-                        sortingAlgorithms.OddEvenSort(vector);
+                        SortingAlgorithms.OddEvenSort(vector);
                         break;
                     case 9:
-                        sortingAlgorithms.CombSort(vector);
+                        SortingAlgorithms.CombSort(vector);
                         break;
                     case 11:
-                        sortingAlgorithms.SelectionSort(vector);
+                        SortingAlgorithms.SelectionSort(vector);
                         break;
                     case 12:
                         SortingAlgorithms.TimSort(vector);
