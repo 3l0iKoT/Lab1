@@ -17,7 +17,12 @@ namespace Lab1
         // сумма элементов
         public static double SumFunction(int[] v)
         {
-            return v.Sum();
+            double product = 0.0;
+            for (int i = 0; i < v.Length; i++)
+            {
+                product += v[i];
+            }
+            return product;
         }
 
         // каждый элемент умножается на 1
