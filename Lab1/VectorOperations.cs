@@ -31,7 +31,7 @@ namespace Lab1
             return product;
         }
 
-        // подсчет полинома
+        // подсчет полинома прямым методом
         public static double NaivePolynomial(int[] coefficients, double x)
         {
             double result = 0;

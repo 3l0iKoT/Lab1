@@ -22,7 +22,6 @@ namespace Lab1
                     matrix[i, j] = rand.Next(0, 21); // Случайные значения от 0 до 20
                 }
             }
-
             return matrix;
         }
 
@@ -41,7 +40,6 @@ namespace Lab1
                     }
                 }
             }
-
             return result;
         }
     }
