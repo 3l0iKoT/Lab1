@@ -38,6 +38,13 @@
                         Foreground="White"
                         Background="Transparent"
                         BorderThickness="0" />
+                <TextBox x:Name="ThirdParam"
+                        Height="50"
+                        BorderThickness="0"
+                        Foreground="White"
+                        Background="Transparent"
+                        Text="Сложность"
+                        TextAlignment="Center" />
                 <TextBox x:Name="Function"
                          Height="50"
                          BorderThickness="0"

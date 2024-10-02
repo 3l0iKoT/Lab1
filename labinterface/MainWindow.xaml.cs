@@ -8,21 +8,12 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Wpf;
 using OxyPlot.Series;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using MahApps.Metro;
-using MahApps;
-using MahApps.Metro.Controls;
 using LabLogic;
-using ControlzEx.Standard;
 using MathNet.Numerics;
-using System.Xml.Linq;
+using MathNet.Numerics.Interpolation;
+using MathNet.Numerics.LinearAlgebra.Complex;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet;
 
 namespace labinterface
 {
@@ -39,33 +30,9 @@ namespace labinterface
 
         private void DrawApproximation(object sender, RoutedEventArgs e)
         {
-            var plotModel = plotView.Model as PlotModel;
-            var lineSeries = CreateLineSeries2();
-
-            double[] data = new double[1000];
-            for (int i = 0; i < 1000; i++)
-            {
-                data[i] = i + 1;
-            }
-            int length = data.Length;
-            double[] elements = new double[length];
-            for (int j = 0; j < length; j++)
-            {
-                elements[j] = j + 1;
-            }
-
-            var coefficients = Fit.Polynomial(elements, data, 2);
-
-            for (int n = 0; n < data.Length; n++)
-            {
-                double value = coefficients[0] + coefficients[1] * (n + 1) + coefficients[2] * Math.Pow(n + 1, 2);
-                lineSeries.Points.Add(new DataPoint(n + 1, value));
-            }
-            // Add the approximating line series to the plot model
-            plotModel.Series.Add(lineSeries);
+            MessageBox.Show("Дорабатывается...");
         }
 
-        
         private void DrawGraphic(object sender, RoutedEventArgs e)
         {
             Program Logic = new Program();
@@ -77,7 +44,7 @@ namespace labinterface
             //plotModel.Series.Add(lineSeries);
 
             // Add the axes to the plot model
-            plotModel.Axes.Add(CreateLinearAxis("Time", AxisPosition.Left));
+            plotModel.Axes.Add(CreateLinearAxis("Time(Sec)", AxisPosition.Left));
             plotModel.Axes.Add(CreateLinearAxis("Runs", AxisPosition.Bottom));
 
             int firstParam = int.Parse(FirstParam.Text);
@@ -121,7 +88,7 @@ namespace labinterface
             switch (index % 8)
             {
                 case 1:
-                    return OxyColors.Red;
+                    return OxyColors.White;
                 case 2:
                     return OxyColors.Green;
                 case 3:
@@ -161,11 +128,14 @@ namespace labinterface
 
         private LineSeries CreateLineSeries2()
         {
-            return new LineSeries
+            var lineSeries = new LineSeries
             {
                 StrokeThickness = 2,
-                Color = OxyColors.Red
+                MarkerSize = 4,
+                MarkerStroke = OxyColors.White,
+                CanTrackerInterpolatePoints = false
             };
+            return lineSeries;
         }
 
         private LinearAxis CreateLinearAxis(string title, AxisPosition position)
@@ -190,15 +160,17 @@ namespace labinterface
                 $"\n3)Произведение элементов" +
                 $"\n4)Полином" +
                 $"\n5)Метод Горнера" +
-                $"\n6)Пузырьковая сортировка" +
-                $"\n7)Быстрая сортировка" +
-                $"\n8)TimSort сортировка" +
-                $"\n9)OddEven сортировка" +
-                $"\n10)Умножение матриц" +
-                $"\n11)CombSort сортировка" +
-                $"\n12)SelectionSort сортировка" +
+                $"\n6)BubbleSort(Пузырьком) сортировка" +
+                $"\n7)QuickSort(Быстрая) сортировка" +
+                $"\n8)OddEvenSort(Чет-нечет) сортировка" +
+                $"\n9)CombSort(Расческой) сортировка" +
+                $"\n10)MultiplyMatrix(Умножение) матриц" +
+                $"\n11)SelectionSort(Выборкой) сортировка" +
+                $"\n12)TimSort(Вставками + слиянием)  сортировка" +
                 $"\nДиапазон - кол-во чисел для исследования функции" +
-                $"\nКол-во запусков - сколько раз запуститься алгоритм");
+                $"\nКол-во запусков - сколько раз запуститься алгоритм" +
+                $"\nАппроксимация дорабатывается" +
+                $"\nСложность для работы с аппроксимацией" );
         }
     }
 }
