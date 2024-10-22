@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Lab1;
 
+
 namespace LabLogic
 {
 
@@ -10,8 +11,29 @@ namespace LabLogic
         {
             static void Main()
             {
-                // не используется
+                int maxDegree = 10; // Вы можете изменить это значение
+
+                // Создайте экземпляры ваших алгоритмов
+                IPowAlgorithm[] algorithms = new IPowAlgorithm[]
+                {
+                    new PowStandart(),
+                    new QuickPow(),
+                    new QuickPow1(),
+                    new RecPow()
+                };
+
+                // Запустите каждый алгоритм и выведите результаты
+                foreach (var algorithm in algorithms)
+                {
+                    algorithm.Run(maxDegree);
+                    Console.WriteLine($"{algorithm.GetName()}:");
+                    foreach (var step in algorithm.Steps)
+                    {
+                        Console.WriteLine($"Степень: {step.Item1}, Шаги: {step.Item2}");
+                    }
+                    Console.WriteLine();
             }
+        }
             // метод для посчета времени используя Stopwatch, выходные параметры mode => case(номер функции)
             // vector - сам массив, x - используется для полинома 
             public double StopWatchFunc(int mode, int[] vector, double x)
