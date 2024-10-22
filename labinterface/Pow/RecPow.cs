@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace labinterface
 {
@@ -9,12 +13,10 @@ namespace labinterface
         public void Run(int maxDegree)
         {
             int number = 2;
-            for (int degree = 1; degree <= maxDegree; degree++)
-            {
-                int stepCount = 0;
-                int result = RecPowRecursive(number, degree, ref stepCount);
-                Steps.Add((degree, stepCount));
-            }
+            int degree = maxDegree;
+            int stepCount = 0;
+            int result = RecPowRecursive(number, degree, ref stepCount);
+            Steps.Add((degree, stepCount));
         }
 
         private int RecPowRecursive(int baseNum, int exp, ref int stepCount)

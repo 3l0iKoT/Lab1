@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace labinterface
 {
@@ -9,17 +13,14 @@ namespace labinterface
         public void Run(int maxDegree)
         {
             int number = 2;
-            for (int degree = 1; degree <= maxDegree; degree++)
+            int result = 1;
+            int stepCount = 0;
+            for (int i = 0; i < maxDegree; i++)
             {
-                int result = 1;
-                int stepCount = 0;
-                for (int i = 0; i < degree; i++)
-                {
-                    result *= number;
-                    stepCount++;
-                }
-                Steps.Add((degree, stepCount));
+                result *= number;
+                stepCount++;
             }
+            Steps.Add((maxDegree, stepCount));
         }
 
         public string GetName()

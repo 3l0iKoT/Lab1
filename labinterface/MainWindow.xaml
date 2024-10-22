@@ -68,11 +68,24 @@
                         <ComboBoxItem Content="BubbleSort"/>
                         <ComboBoxItem Content="QuickSort"/>
                         <ComboBoxItem Content="TimSort"/>
+                        <ComboBoxItem Content="PowStandart"/>
+                        <ComboBoxItem Content="QuickPow"/>
+                        <ComboBoxItem Content="QuickPow1"/>
+                        <ComboBoxItem Content="RecPow"/>
                         <ComboBoxItem Content="Умножение матриц"/>
                         <ComboBoxItem Content="OddEvenSort"/>
                         <ComboBoxItem Content="CombSort"/>
                         <ComboBoxItem Content="SelectionSort"/>
                     </ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
+                    <TextBlock Text="Степень:" Margin="5" VerticalAlignment="Center"/>
+                    <TextBox x:Name="Pow"
+                             BorderThickness="1"
+                             Foreground="Black"
+                             Background="White"
+                             Text="2" 
+                             TextAlignment="Center" TextChanged="FirstParam_TextChanged" Height="19" VerticalAlignment="Center" Width="165" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
                     <TextBlock Text="Диапозон:" Margin="5" VerticalAlignment="Center"/>

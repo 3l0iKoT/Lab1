@@ -19,6 +19,10 @@ namespace labinterface
         public MainWindow()
         {
             InitializeComponent();
+            plotModel = CreatePlotModel();
+            plotModel.Axes.Add(CreateLinearAxis("Time(Sec)", AxisPosition.Left));
+            plotModel.Axes.Add(CreateLinearAxis("Runs", AxisPosition.Bottom));
+            plotView.Model = plotModel;
         }
 
         private void DrawApproximation(object sender, RoutedEventArgs e)
@@ -74,20 +78,30 @@ namespace labinterface
 
         private void DrawGraphic(object sender, RoutedEventArgs e)
         {
-            Program Logic = new Program();
+            IPowAlgorithm[] algorithms = new IPowAlgorithm[]
+                {
+                    new PowStandart(),
+                    new QuickPow(),
+                    new QuickPow1(),
+                    new RecPow()
+                };
 
-            plotModel = CreatePlotModel();
+            Program Logic = new Program();
+            plotModel.Series.Clear();
+
+            //plotModel = CreatePlotModel();
             //var lineSeries = CreateLineSeries();
 
             // Add the line series to the plot model
             //plotModel.Series.Add(lineSeries);
 
             // Add the axes to the plot model
-            plotModel.Axes.Add(CreateLinearAxis("Time(Sec)", AxisPosition.Left));
-            plotModel.Axes.Add(CreateLinearAxis("Runs", AxisPosition.Bottom));
+            //plotModel.Axes.Add(CreateLinearAxis("Time(Sec)", AxisPosition.Left));
+            //plotModel.Axes.Add(CreateLinearAxis("Runs", AxisPosition.Bottom));
 
             int firstParam = int.Parse(FirstParam.Text);
             int secondParam = int.Parse(SecondParam.Text);
+            int pow = int.Parse(Pow.Text);
 
             bool otherVisibility = (bool)Other.IsChecked;
             bool avarageVisibility = (bool)Avarage.IsChecked;
@@ -100,10 +114,8 @@ namespace labinterface
             else
             {
                 string function = selectedItem.Content.ToString();
-                var lineSeries2 = CreateLineSeries();
                 for (int j = 1; j <= secondParam; j++)
                 {
-                    lineSeries2.Color = OxyColors.Red;
                     var lineSeries1 = CreateLineSeries();
                     lineSeries1.Color = GetColor(j, secondParam);
 
@@ -111,43 +123,59 @@ namespace labinterface
                     {
                         int[] vector = Enumerable.Repeat(i, i).ToArray();
                         double x = 1.5; // Replace this with the appropriate value
-                        double y = Logic.StopWatchFunc(function, vector, x);
+                        double y = Logic.StopWatchFunc(function, vector, x, i);
                         lineSeries1.Points.Add(new DataPoint(i, y));
-                        if (i < lineSeries2.Points.Count)
+                    }
+                    for (int k = 1; k <= 100; k++)
+                    {
+                        for (int i = 1; i < lineSeries1.Points.Count; i++)
                         {
-                            DataPoint point1 = lineSeries1.Points[i];
-                            DataPoint point2 = lineSeries2.Points[i];
-                            if (point1.Y > point2.Y + point2.Y * 0.1)
-                            {
-                                lineSeries2.Points[i] = new DataPoint(point1.X, point2.Y);
-                            }
-                            else if (point2.Y > point1.Y + point1.Y * 0.1)
-                            {
-                                lineSeries2.Points[i] = new DataPoint(point1.X, point1.Y);
-                            }
+                            var line = lineSeries1.Points;
+                            double first;
+                            if (i == 1)
+                                first = 0;
                             else
+                                first = line[i - 2].Y;
+                            double second = line[i - 1].Y;
+                            double third = line[i].Y;
+                            if ((first * 1.1 < second || second > third * 1.1))
                             {
-                                lineSeries2.Points[i] = new DataPoint(point1.X, ((j - 1) * point2.Y + point1.Y) / j);
+                                lineSeries1.Points[i - 1] = new DataPoint(line[i - 1].X, (first + third) / 2);
                             }
-                        }
-                        else
-                        {
-                            lineSeries2.Points.Add(new DataPoint(i, y));
                         }
                     }
                     plotModel.Series.Add(lineSeries1);
-                    if (!otherVisibility)
+                    if (!avarageVisibility)
                         plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
+
+                }
+                var lineSeries2 = CreateLineSeries();
+                lineSeries2.Color = OxyColors.Red;
+                int c = 0;
+                foreach (var series in plotModel.Series)
+                {
+                    c++;
+                    var currentLineSeries = ((LineSeries)series).Points;
+                    for (int i = 0; i < currentLineSeries.Count; i++)
+                    {
+                        if (i < lineSeries2.Points.Count)
+                        {
+                            DataPoint point1 = currentLineSeries[i];
+                            DataPoint point2 = lineSeries2.Points[i];
+                            lineSeries2.Points[i] = new DataPoint(point1.X, ((c - 1) * point2.Y + point1.Y) / c);
+                        }
+                        else
+                        {
+                            lineSeries2.Points.Add(new DataPoint(i, currentLineSeries[i].Y));
+                        }
+                    }
                 }
                 plotModel.Series.Add(lineSeries2);
                 if (!avarageVisibility)
                     plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
                 UpdatePlotAxes();
-                //var lastSeries = (LineSeries)plotModel.Series[plotModel.Series.Count - 1];
-                //DataPoint point = lastSeries.Points[lastSeries.Points.Count - 1];
+                plotModel.InvalidatePlot(true);
             }
-            // Assign the plot model to the plot view
-            plotView.Model = plotModel;
         }
 
         private void UpdatePlotAxes()
@@ -155,16 +183,32 @@ namespace labinterface
             var lastSeries = (LineSeries)plotModel.Series[plotModel.Series.Count - 1];
             DataPoint point = lastSeries.Points[lastSeries.Points.Count - 1];
 
-            double minX = 0;
-            double maxX = point.X;
-            double minY = 0;
-            double maxY = point.Y;
+            double minX = 0 - point.X / 10;
+            double maxX = point.X + point.X / 10;
+            double minY = 0 - point.Y / 10;
+            double maxY = point.Y + point.Y / 10;
 
             plotModel.Axes.Clear(); // Очищаем существующие оси, если нужно
 
             // Создаем новые оси
-            plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Minimum = minX, Maximum = maxX });
-            plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Minimum = minY, Maximum = maxY });
+            plotModel.Axes.Add(new LinearAxis {
+                Title = "Runs",
+                Position = AxisPosition.Bottom,
+                Minimum = minX,
+                Maximum = maxX,
+                PositionAtZeroCrossing = true,
+                TickStyle = TickStyle.Crossing,
+                IsAxisVisible = true,
+            });
+            plotModel.Axes.Add(new LinearAxis {
+                Title = "Time(Sec)",
+                Position = AxisPosition.Left,
+                Minimum = minY,
+                Maximum = maxY,
+                PositionAtZeroCrossing = true,
+                TickStyle = TickStyle.Crossing,
+                IsAxisVisible = true,
+            });
 
             // Обновляем график
             plotModel.InvalidatePlot(true);
@@ -254,6 +298,7 @@ namespace labinterface
                 //$"\n10)MultiplyMatrix(Умножение) матриц" +
                 //$"\n11)SelectionSort(Выборкой) сортировка" +
                 //$"\n12)TimSort(Вставками + слиянием)  сортировка" +
+                $"\nСтепень - Используется для степенных функций" +
                 $"\nДиапазон - кол-во чисел для исследования функции" +
                 $"\nКол-во запусков - сколько раз запуститься алгоритм"
                 //+ $"\nАппроксимация дорабатывается" +
