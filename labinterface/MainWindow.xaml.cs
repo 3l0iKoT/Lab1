@@ -14,6 +14,7 @@ using MathNet.Numerics.Interpolation;
 using MathNet.Numerics.LinearAlgebra.Complex;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet;
+using System.Reflection;
 
 namespace labinterface
 {
@@ -23,6 +24,8 @@ namespace labinterface
 
     public partial class MainWindow : System.Windows.Window
     {
+        private PlotModel plotModel;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,11 +36,57 @@ namespace labinterface
             MessageBox.Show("Дорабатывается...");
         }
 
+        private void ToggleAllExceptLastSeries(bool isVisible)
+        {
+            // Проверяем, что в plotModel есть хотя бы одна серия
+            if (plotModel != null && plotModel.Series.Count > 1)
+            {
+                // Проходим по всем сериям, кроме последней
+                for (int i = 0; i < plotModel.Series.Count - 1; i++)
+                {
+                    plotModel.Series[i].IsVisible = isVisible;
+                }
+
+                // Обновляем график
+                plotModel.InvalidatePlot(true);
+            }
+        }
+
+        private void Other_Checked(object sender, RoutedEventArgs e)
+        {
+            ToggleAllExceptLastSeries(true);
+        }
+
+        private void Other_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToggleAllExceptLastSeries(false);
+        }
+
+        private void Avarage_Checked(object sender, RoutedEventArgs e)
+        {
+            if (plotModel != null && plotModel.Series.Count > 0)
+            {
+                var lastSeries = plotModel.Series[plotModel.Series.Count - 1];
+                lastSeries.IsVisible = true;
+                plotModel.InvalidatePlot(true);
+            }
+        }
+
+        private void Avarage_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (plotModel != null && plotModel.Series.Count > 0)
+            {
+                var lastSeries = plotModel.Series[plotModel.Series.Count - 1];
+                lastSeries.IsVisible = false;
+                plotModel.InvalidatePlot(true);
+            }
+        }
+
         private void DrawGraphic(object sender, RoutedEventArgs e)
         {
             Program Logic = new Program();
 
-            var plotModel = CreatePlotModel();
+            plotModel = CreatePlotModel();
             //var lineSeries = CreateLineSeries();
 
             // Add the line series to the plot model
@@ -50,6 +99,9 @@ namespace labinterface
             int firstParam = int.Parse(FirstParam.Text);
             int secondParam = int.Parse(SecondParam.Text);
 
+            bool otherVisibility = (bool)Other.IsChecked;
+            bool avarageVisibility = (bool)Avarage.IsChecked;
+
             int function;
             if(int.TryParse(Function.Text, out function))
             {
@@ -59,20 +111,48 @@ namespace labinterface
                 }
                 else
                 {
-                    for(int j = 1; j <= secondParam; j++)
+                    var lineSeries2 = CreateLineSeries();
+                    for (int j = 1; j <= secondParam; j++)
                     {
-                        var lineSeries = CreateLineSeries();
-                        lineSeries.Color = GetColor(j);
+                        lineSeries2.Color = OxyColors.Red;
+                        var lineSeries1 = CreateLineSeries();
+                        lineSeries1.Color = GetColor(j, secondParam);
 
                         for (int i = (int)0.1; i <= firstParam; i++)
                         {
                             int[] vector = Enumerable.Repeat(i, i).ToArray();
                             double x = 1.5; // Replace this with the appropriate value
                             double y = Logic.StopWatchFunc(function, vector, x);
-                            lineSeries.Points.Add(new DataPoint(i, y));
+                            lineSeries1.Points.Add(new DataPoint(i, y));
+                            if (i < lineSeries2.Points.Count)
+                            {
+                                DataPoint point1 = lineSeries1.Points[i];
+                                DataPoint point2 = lineSeries2.Points[i];
+                                if (point1.Y > point2.Y + point2.Y * 0.1)
+                                {
+                                    lineSeries2.Points[i] = new DataPoint(point1.X, point2.Y);
+                                }
+                                else if (point2.Y > point1.Y + point1.Y * 0.1)
+                                {
+                                    lineSeries2.Points[i] = new DataPoint(point1.X, point1.Y);
+                                }
+                                else
+                                {
+                                    lineSeries2.Points[i] = new DataPoint(point1.X, ((j - 1) * point2.Y + point1.Y) / j);
+                                }
+                            }
+                            else
+                            {
+                                lineSeries2.Points.Add(new DataPoint(i, y));
+                            }
                         }
-                        plotModel.Series.Add(lineSeries);
+                        plotModel.Series.Add(lineSeries1);
+                        if (!otherVisibility)
+                            plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
                     }
+                    plotModel.Series.Add(lineSeries2);
+                    if (!avarageVisibility)
+                        plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
                 }
             }
             else
@@ -83,29 +163,28 @@ namespace labinterface
             plotView.Model = plotModel;
         }
 
-        private OxyColor GetColor(int index)
+        private OxyColor GetColor(int index, int count)
         {
-            switch (index % 8)
+            if (count <= 1 || index < 1 || index > count)
             {
-                case 1:
-                    return OxyColors.White;
-                case 2:
-                    return OxyColors.Green;
-                case 3:
-                    return OxyColors.Blue;
-                case 4:
-                    return OxyColors.Yellow;
-                case 5:
-                    return OxyColors.Cyan;
-                case 6:
-                    return OxyColors.Magenta;
-                case 7:
-                    return OxyColors.Orange;
-                case 0:
-                    return OxyColors.Purple;
-                default:
-                    return OxyColors.Black;
+                return OxyColors.Yellow;
             }
+
+            OxyColor startColor = OxyColors.Yellow;
+            OxyColor endColor = OxyColors.Green;
+
+            double fraction = (double)(index - 1) / (count - 1);
+
+            return InterpolateColor(startColor, endColor, fraction);
+        }
+
+        private OxyColor InterpolateColor(OxyColor startColor, OxyColor endColor, double fraction)
+        {
+            byte r = (byte)(startColor.R + (endColor.R - startColor.R) * fraction);
+            byte g = (byte)(startColor.G + (endColor.G - startColor.G) * fraction);
+            byte b = (byte)(startColor.B + (endColor.B - startColor.B) * fraction);
+
+            return OxyColor.FromRgb(r, g, b);
         }
 
         private PlotModel CreatePlotModel()

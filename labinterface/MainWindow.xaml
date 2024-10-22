@@ -24,12 +24,22 @@
               HorizontalAlignment="Right" 
               Background="#71777D">
             <StackPanel Orientation="Vertical" VerticalAlignment="Top" Height="460" Margin="0,224,0,0">
-                <CheckBox x:Name="Avarage"
-                          Content="Среднее значение"
+                <CheckBox x:Name="Other"
+                          Content="Графики"
                           Height="25"
                           Foreground="White"
                           HorizontalAlignment="Center"
-                          IsChecked="False"/>
+                          IsChecked="false"
+                          Checked="Other_Checked"
+                          Unchecked="Other_Unchecked"/>
+                <CheckBox x:Name="Avarage"
+                          Content="Среднее значение графиков"
+                          Height="25"
+                          Foreground="White"
+                          HorizontalAlignment="Center"
+                          IsChecked="false"
+                          Checked="Avarage_Checked"
+                          Unchecked="Avarage_Unchecked"/>
                 <Button x:Name="Information"
                         Content="Информация"
                         Click="GetInformation"
