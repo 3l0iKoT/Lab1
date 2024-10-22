@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using OxyPlot;
 using OxyPlot.Axes;
-using OxyPlot.Wpf;
 using OxyPlot.Series;
 using LabLogic;
-using MathNet.Numerics;
-using MathNet.Numerics.Interpolation;
-using MathNet.Numerics.LinearAlgebra.Complex;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet;
-using System.Reflection;
 using System.Windows.Controls;
 
 namespace labinterface
