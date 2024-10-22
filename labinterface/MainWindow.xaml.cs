@@ -15,6 +15,7 @@ using MathNet.Numerics.LinearAlgebra.Complex;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet;
 using System.Reflection;
+using System.Windows.Controls;
 
 namespace labinterface
 {
@@ -102,65 +103,82 @@ namespace labinterface
             bool otherVisibility = (bool)Other.IsChecked;
             bool avarageVisibility = (bool)Avarage.IsChecked;
 
-            int function;
-            if(int.TryParse(Function.Text, out function))
+            ComboBoxItem selectedItem = (ComboBoxItem)Functions.SelectedItem;
+            if (selectedItem == null)
             {
-                if (function == 0 || function > 12)
-                {
-                    MessageBox.Show("Такого алгоритма нет! Выберите от 1 до 12.");
-                }
-                else
-                {
-                    var lineSeries2 = CreateLineSeries();
-                    for (int j = 1; j <= secondParam; j++)
-                    {
-                        lineSeries2.Color = OxyColors.Red;
-                        var lineSeries1 = CreateLineSeries();
-                        lineSeries1.Color = GetColor(j, secondParam);
-
-                        for (int i = (int)0.1; i <= firstParam; i++)
-                        {
-                            int[] vector = Enumerable.Repeat(i, i).ToArray();
-                            double x = 1.5; // Replace this with the appropriate value
-                            double y = Logic.StopWatchFunc(function, vector, x);
-                            lineSeries1.Points.Add(new DataPoint(i, y));
-                            if (i < lineSeries2.Points.Count)
-                            {
-                                DataPoint point1 = lineSeries1.Points[i];
-                                DataPoint point2 = lineSeries2.Points[i];
-                                if (point1.Y > point2.Y + point2.Y * 0.1)
-                                {
-                                    lineSeries2.Points[i] = new DataPoint(point1.X, point2.Y);
-                                }
-                                else if (point2.Y > point1.Y + point1.Y * 0.1)
-                                {
-                                    lineSeries2.Points[i] = new DataPoint(point1.X, point1.Y);
-                                }
-                                else
-                                {
-                                    lineSeries2.Points[i] = new DataPoint(point1.X, ((j - 1) * point2.Y + point1.Y) / j);
-                                }
-                            }
-                            else
-                            {
-                                lineSeries2.Points.Add(new DataPoint(i, y));
-                            }
-                        }
-                        plotModel.Series.Add(lineSeries1);
-                        if (!otherVisibility)
-                            plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
-                    }
-                    plotModel.Series.Add(lineSeries2);
-                    if (!avarageVisibility)
-                        plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
-                }
+                MessageBox.Show("Выберете алгоритм");
             }
             else
             {
-                MessageBox.Show("Введите число! Выберите от 1 до 12.");
+                string function = selectedItem.Content.ToString();
+                var lineSeries2 = CreateLineSeries();
+                for (int j = 1; j <= secondParam; j++)
+                {
+                    lineSeries2.Color = OxyColors.Red;
+                    var lineSeries1 = CreateLineSeries();
+                    lineSeries1.Color = GetColor(j, secondParam);
+
+                    for (int i = (int)0.1; i <= firstParam; i++)
+                    {
+                        int[] vector = Enumerable.Repeat(i, i).ToArray();
+                        double x = 1.5; // Replace this with the appropriate value
+                        double y = Logic.StopWatchFunc(function, vector, x);
+                        lineSeries1.Points.Add(new DataPoint(i, y));
+                        if (i < lineSeries2.Points.Count)
+                        {
+                            DataPoint point1 = lineSeries1.Points[i];
+                            DataPoint point2 = lineSeries2.Points[i];
+                            if (point1.Y > point2.Y + point2.Y * 0.1)
+                            {
+                                lineSeries2.Points[i] = new DataPoint(point1.X, point2.Y);
+                            }
+                            else if (point2.Y > point1.Y + point1.Y * 0.1)
+                            {
+                                lineSeries2.Points[i] = new DataPoint(point1.X, point1.Y);
+                            }
+                            else
+                            {
+                                lineSeries2.Points[i] = new DataPoint(point1.X, ((j - 1) * point2.Y + point1.Y) / j);
+                            }
+                        }
+                        else
+                        {
+                            lineSeries2.Points.Add(new DataPoint(i, y));
+                        }
+                    }
+                    plotModel.Series.Add(lineSeries1);
+                    if (!otherVisibility)
+                        plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
+                }
+                plotModel.Series.Add(lineSeries2);
+                if (!avarageVisibility)
+                    plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
+                UpdatePlotAxes();
+                //var lastSeries = (LineSeries)plotModel.Series[plotModel.Series.Count - 1];
+                //DataPoint point = lastSeries.Points[lastSeries.Points.Count - 1];
             }
             // Assign the plot model to the plot view
             plotView.Model = plotModel;
+        }
+
+        private void UpdatePlotAxes()
+        {
+            var lastSeries = (LineSeries)plotModel.Series[plotModel.Series.Count - 1];
+            DataPoint point = lastSeries.Points[lastSeries.Points.Count - 1];
+
+            double minX = 0;
+            double maxX = point.X;
+            double minY = 0;
+            double maxY = point.Y;
+
+            plotModel.Axes.Clear(); // Очищаем существующие оси, если нужно
+
+            // Создаем новые оси
+            plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Minimum = minX, Maximum = maxX });
+            plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Minimum = minY, Maximum = maxY });
+
+            // Обновляем график
+            plotModel.InvalidatePlot(true);
         }
 
         private OxyColor GetColor(int index, int count)
@@ -234,22 +252,34 @@ namespace labinterface
 
         private void GetInformation(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"Выбор функции:\n1)Постоянная функция" +
-                $"\n2)Сумма элементов" +
-                $"\n3)Произведение элементов" +
-                $"\n4)Полином" +
-                $"\n5)Метод Горнера" +
-                $"\n6)BubbleSort(Пузырьком) сортировка" +
-                $"\n7)QuickSort(Быстрая) сортировка" +
-                $"\n8)OddEvenSort(Чет-нечет) сортировка" +
-                $"\n9)CombSort(Расческой) сортировка" +
-                $"\n10)MultiplyMatrix(Умножение) матриц" +
-                $"\n11)SelectionSort(Выборкой) сортировка" +
-                $"\n12)TimSort(Вставками + слиянием)  сортировка" +
+            MessageBox.Show(
+                //$"Выбор функции:\n1)Постоянная функция" +
+                //$"\n2)Сумма элементов" +
+                //$"\n3)Произведение элементов" +
+                //$"\n4)Полином" +
+                //$"\n5)Метод Горнера" +
+                //$"\n6)BubbleSort(Пузырьком) сортировка" +
+                //$"\n7)QuickSort(Быстрая) сортировка" +
+                //$"\n8)OddEvenSort(Чет-нечет) сортировка" +
+                //$"\n9)CombSort(Расческой) сортировка" +
+                //$"\n10)MultiplyMatrix(Умножение) матриц" +
+                //$"\n11)SelectionSort(Выборкой) сортировка" +
+                //$"\n12)TimSort(Вставками + слиянием)  сортировка" +
                 $"\nДиапазон - кол-во чисел для исследования функции" +
-                $"\nКол-во запусков - сколько раз запуститься алгоритм" +
-                $"\nАппроксимация дорабатывается" +
-                $"\nСложность для работы с аппроксимацией" );
+                $"\nКол-во запусков - сколько раз запуститься алгоритм"
+                //+ $"\nАппроксимация дорабатывается" +
+                //$"\nСложность для работы с аппроксимацией"
+                );
+        }
+
+        private void ThirdParam_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
+
+        private void FirstParam_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
