@@ -23,7 +23,13 @@
               Width="200" 
               HorizontalAlignment="Right" 
               Background="#71777D">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top" Height="460" Margin="0,224,0,0">
+                <CheckBox x:Name="Avarage"
+                          Content="Среднее значение"
+                          Height="25"
+                          Foreground="White"
+                          HorizontalAlignment="Center"
+                          IsChecked="False"/>
                 <Button x:Name="Information"
                         Content="Информация"
                         Click="GetInformation"
