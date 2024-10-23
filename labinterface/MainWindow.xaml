@@ -14,7 +14,7 @@
             <ColumnDefinition Width="381.6" />
             <ColumnDefinition Width="118.4"/>
         </Grid.ColumnDefinitions>
-        <oxy:PlotView Width="1000" 
+        <oxy:PlotView Width="957" 
                       HorizontalAlignment="Left" 
                       x:Name="plotView" 
                       Background="#ffffff" 
@@ -79,22 +79,13 @@
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
-                    <TextBlock Text="Степень:" Margin="5" VerticalAlignment="Center"/>
-                    <TextBox x:Name="Pow"
-                             BorderThickness="1"
-                             Foreground="Black"
-                             Background="White"
-                             Text="2" 
-                             TextAlignment="Center" TextChanged="FirstParam_TextChanged" Height="19" VerticalAlignment="Center" Width="165" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
                     <TextBlock Text="Диапозон:" Margin="5" VerticalAlignment="Center"/>
                     <TextBox x:Name="FirstParam"
                              BorderThickness="1"
                              Foreground="Black"
                              Background="White"
                              ToolTip="Рекомендуемые значения: Сумма элементов - 10000, Произведение элементов - 10000, Полином - 10000, Метод Горнера - 10000, BubbleSort - 3000, QuickSort - 3000, OddEvenSort - 3000, CombSort - 3000, MultiplyMatrix - 300, SelectionSort - 3000, TimSort - 10000"
-                             Text="100" 
+                             Text="1000" 
                              TextAlignment="Center" TextChanged="FirstParam_TextChanged" Height="19" VerticalAlignment="Center" Width="155" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0" HorizontalAlignment="Left">

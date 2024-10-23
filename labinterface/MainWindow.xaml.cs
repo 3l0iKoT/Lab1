@@ -101,7 +101,6 @@ namespace labinterface
 
             int firstParam = int.Parse(FirstParam.Text);
             int secondParam = int.Parse(SecondParam.Text);
-            int pow = int.Parse(Pow.Text);
 
             bool otherVisibility = (bool)Other.IsChecked;
             bool avarageVisibility = (bool)Avarage.IsChecked;
@@ -126,26 +125,29 @@ namespace labinterface
                         double y = Logic.StopWatchFunc(function, vector, x, i);
                         lineSeries1.Points.Add(new DataPoint(i, y));
                     }
-                    for (int k = 1; k <= 100; k++)
+                    if (function != "Постаянная функция")
                     {
-                        for (int i = 1; i < lineSeries1.Points.Count; i++)
+                        for (int k = 1; k <= 20; k++)
                         {
-                            var line = lineSeries1.Points;
-                            double first;
-                            if (i == 1)
-                                first = 0;
-                            else
-                                first = line[i - 2].Y;
-                            double second = line[i - 1].Y;
-                            double third = line[i].Y;
-                            if ((first * 1.1 < second || second > third * 1.1))
+                            for (int i = 1; i < lineSeries1.Points.Count; i++)
                             {
-                                lineSeries1.Points[i - 1] = new DataPoint(line[i - 1].X, (first + third) / 2);
+                                var line = lineSeries1.Points;
+                                double first;
+                                if (i == 1)
+                                    first = 0;
+                                else
+                                    first = line[i - 2].Y;
+                                double second = line[i - 1].Y;
+                                double third = line[i].Y;
+                                if ((first * 1.1 < second || second > third * 1.1))
+                                {
+                                    lineSeries1.Points[i - 1] = new DataPoint(line[i - 1].X, (first + third) / 2);
+                                }
                             }
                         }
                     }
                     plotModel.Series.Add(lineSeries1);
-                    if (!avarageVisibility)
+                    if (!otherVisibility)
                         plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
 
                 }
@@ -158,7 +160,7 @@ namespace labinterface
                     var currentLineSeries = ((LineSeries)series).Points;
                     for (int i = 0; i < currentLineSeries.Count; i++)
                     {
-                        if (i < lineSeries2.Points.Count)
+                        if (i < lineSeries2.Points.Count )
                         {
                             DataPoint point1 = currentLineSeries[i];
                             DataPoint point2 = lineSeries2.Points[i];
