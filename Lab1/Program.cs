@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Lab1;
 
 
@@ -36,46 +37,46 @@ namespace LabLogic
         }
             // метод для посчета времени используя Stopwatch, выходные параметры mode => case(номер функции)
             // vector - сам массив, x - используется для полинома 
-            public double StopWatchFunc(int mode, int[] vector, double x)
+            public double StopWatchFunc(string mode, int[] vector, double x)
             {
                 VectorOperations vectorOperations = new VectorOperations();                
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 switch (mode)
                 {
-                    case 1:
+                    case "Постаянная функция":
                         VectorOperations.ConstantFunction(vector);
                         break;
-                    case 2:
+                    case "Сумма элементов":
                         VectorOperations.SumFunction(vector);
                         break;
-                    case 3:
+                    case "Произведение элементов":
                         VectorOperations.ProductFunction(vector);
                         break;
-                    case 4:
+                    case "Полином":
                         VectorOperations.NaivePolynomial(vector, x);
                         break;
-                    case 5:
+                    case "Метод Горнера":
                         VectorOperations.HornerMethod(vector, x);
                         break;
-                    case 6:
+                    case "BubbleSort":
                         SortingAlgorithms.BubbleSort(vector);
                         break;
-                    case 7:
+                    case "QuickSort":
                         SortingAlgorithms.QuickSort(vector, 0, vector.Length - 1);
                         break;
-                    case 8:
+                    case "OddEvenSort":
                         SortingAlgorithms.OddEvenSort(vector);
                         break;
-                    case 9:
+                    case "CombSort":
                         SortingAlgorithms.CombSort(vector);
                         break;
-                    case 11:
+                    case "SelectionSort":
                         SortingAlgorithms.SelectionSort(vector);
                         break;
-                    case 12:
+                    case "TimSort":
                         SortingAlgorithms.TimSort(vector);
                         break;
-                    case 10: // here maybe bug with time m/sec
+                    case "Умножение матриц": // here maybe bug with time m/sec
                         int size = vector.Length; // size of matrix
                         int[,] A = MatrixOperations.GenerateRandomMatrix(size); // 1st matrix generator
                         int[,] B = MatrixOperations.GenerateRandomMatrix(size); // 2nd matrix generator

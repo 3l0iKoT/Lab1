@@ -11,69 +11,99 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="500" />
+            <ColumnDefinition Width="381.6" />
+            <ColumnDefinition Width="118.4"/>
         </Grid.ColumnDefinitions>
-        <oxy:PlotView Width="1000" 
+        <oxy:PlotView Width="957" 
                       HorizontalAlignment="Left" 
                       x:Name="plotView" 
-                      Background="#4D4C59" 
+                      Background="#ffffff" 
                       Grid.Column="0" 
                       Grid.ColumnSpan="2"/>
         <Grid Grid.Column="1" 
-              Width="200" 
-              HorizontalAlignment="Right" 
-              Background="#71777D">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+              Width="238" 
+              HorizontalAlignment="Left" 
+              Background="#dbdbdb" Grid.ColumnSpan="2" Margin="262,0,0,0">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="0,0,0,7">
+                <CheckBox x:Name="Other"
+                          Content="Графики"
+                          Height="25"
+                          Foreground="Black"
+                          HorizontalAlignment="Center"
+                          IsChecked="true"
+                          Checked="Other_Checked"
+                          Unchecked="Other_Unchecked"
+                          Margin="0"/>
+                <CheckBox x:Name="Avarage"
+                          Content="Среднее значение графиков"
+                          Height="25"
+                          Foreground="Black"
+                          HorizontalAlignment="Center"
+                          IsChecked="false"
+                          Checked="Avarage_Checked"
+                          Unchecked="Avarage_Unchecked"
+                          Margin="0"/>
                 <Button x:Name="Information"
                         Content="Информация"
                         Click="GetInformation"
                         Height="50"
-                        Foreground="White"
-                        Background="Transparent"
-                        BorderThickness="0" />
-                <Button x:Name="Approximation"
+                        Foreground="Black"
+                        Background="White"
+                        BorderThickness="2"
+                        Margin="7" />
+                <!--<Button x:Name="Approximation"
                         Content="Аппроксимация"
                         Click="DrawApproximation"
                         Height="50"
-                        Foreground="White"
-                        Background="Transparent"
-                        BorderThickness="0" />
-                <TextBox x:Name="ThirdParam"
-                        Height="50"
-                        BorderThickness="0"
-                        Foreground="White"
-                        Background="Transparent"
-                        Text="Сложность"
-                        TextAlignment="Center" />
-                <TextBox x:Name="Function"
-                         Height="50"
-                         BorderThickness="0"
-                         Foreground="White"
-                         Background="Transparent"
-                         Text="Выбор функции" 
-                         TextAlignment="Center" />
-                <TextBox x:Name="FirstParam"
-                         Height="50"
-                         BorderThickness="0"
-                         Foreground="White"
-                         Background="Transparent"
-                         ToolTip="Рекомендуемые значения: Сумма элементов - 10000, Произведение элементов - 10000, Полином - 10000, Метод Горнера - 10000, BubbleSort - 3000, QuickSort - 3000, OddEvenSort - 3000, CombSort - 3000, MultiplyMatrix - 300, SelectionSort - 3000, TimSort - 10000"
-                         Text="Диапазон" 
-                         TextAlignment="Center" />
-                <TextBox x:Name="SecondParam"
-                         Height="50"
-                         BorderThickness="0"
-                         Foreground="White"
-                         Background="Transparent"
-                         Text="Кол-во запусков" 
-                         TextAlignment="Center" />
+                        Foreground="Black"
+                        BorderThickness="1.5" Background="White" Margin="7" />-->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
+                    <TextBlock Text="Функция:" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="Functions" Width="162" RenderTransformOrigin="0.5,0.5" MaxDropDownHeight="200" VerticalAlignment="Center">
+                        <ComboBoxItem Content="Постаянная функция"/>
+                        <ComboBoxItem Content="Сумма элементов"/>
+                        <ComboBoxItem Content="Произведение элементов"/>
+                        <ComboBoxItem Content="Полином"/>
+                        <ComboBoxItem Content="Метод Горнера"/>
+                        <ComboBoxItem Content="BubbleSort"/>
+                        <ComboBoxItem Content="QuickSort"/>
+                        <ComboBoxItem Content="TimSort"/>
+                        <ComboBoxItem Content="PowStandart"/>
+                        <ComboBoxItem Content="QuickPow"/>
+                        <ComboBoxItem Content="QuickPow1"/>
+                        <ComboBoxItem Content="RecPow"/>
+                        <ComboBoxItem Content="Умножение матриц"/>
+                        <ComboBoxItem Content="OddEvenSort"/>
+                        <ComboBoxItem Content="CombSort"/>
+                        <ComboBoxItem Content="SelectionSort"/>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0">
+                    <TextBlock Text="Диапозон:" Margin="5" VerticalAlignment="Center"/>
+                    <TextBox x:Name="FirstParam"
+                             BorderThickness="1"
+                             Foreground="Black"
+                             Background="White"
+                             ToolTip="Рекомендуемые значения: Сумма элементов - 10000, Произведение элементов - 10000, Полином - 10000, Метод Горнера - 10000, BubbleSort - 3000, QuickSort - 3000, OddEvenSort - 3000, CombSort - 3000, MultiplyMatrix - 300, SelectionSort - 3000, TimSort - 10000"
+                             Text="1000" 
+                             TextAlignment="Center" TextChanged="FirstParam_TextChanged" Height="19" VerticalAlignment="Center" Width="155" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0" HorizontalAlignment="Left">
+                    <TextBlock Text="Кол-во запусков:" Margin="5" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SecondParam"
+                             BorderThickness="1"
+                             Foreground="Black"
+                             Background="White"
+                             Text="3" 
+                             TextAlignment="Center" Height="19" Width="119"/>
+                </StackPanel>
                 <Button x:Name="MakeIt"
                         Content="Старт!"
                         Click="DrawGraphic"
                         Height="50"
-                        Foreground="White"
-                        Background="Transparent"
-                        BorderThickness="0" />
+                        Foreground="Black"
+                        Background="White"
+                        BorderThickness="2" Margin="7,7,6,0" />
             </StackPanel>
         </Grid>
     </Grid>

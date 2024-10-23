@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using OxyPlot;
 using OxyPlot.Axes;
-using OxyPlot.Wpf;
 using OxyPlot.Series;
 using LabLogic;
-using MathNet.Numerics;
-using MathNet.Numerics.Interpolation;
-using MathNet.Numerics.LinearAlgebra.Complex;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet;
+using System.Windows.Controls;
 
 namespace labinterface
 {
@@ -23,9 +14,15 @@ namespace labinterface
 
     public partial class MainWindow : System.Windows.Window
     {
+        private PlotModel plotModel;
+
         public MainWindow()
         {
             InitializeComponent();
+            plotModel = CreatePlotModel();
+            plotModel.Axes.Add(CreateLinearAxis("Time(Sec)", AxisPosition.Left));
+            plotModel.Axes.Add(CreateLinearAxis("Runs", AxisPosition.Bottom));
+            plotView.Model = plotModel;
         }
 
         private void DrawApproximation(object sender, RoutedEventArgs e)
@@ -33,79 +30,214 @@ namespace labinterface
             MessageBox.Show("Дорабатывается...");
         }
 
+        private void ToggleAllExceptLastSeries(bool isVisible)
+        {
+            // Проверяем, что в plotModel есть хотя бы одна серия
+            if (plotModel != null && plotModel.Series.Count > 1)
+            {
+                // Проходим по всем сериям, кроме последней
+                for (int i = 0; i < plotModel.Series.Count - 1; i++)
+                {
+                    plotModel.Series[i].IsVisible = isVisible;
+                }
+
+                // Обновляем график
+                plotModel.InvalidatePlot(true);
+            }
+        }
+
+        private void Other_Checked(object sender, RoutedEventArgs e)
+        {
+            ToggleAllExceptLastSeries(true);
+        }
+
+        private void Other_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToggleAllExceptLastSeries(false);
+        }
+
+        private void Avarage_Checked(object sender, RoutedEventArgs e)
+        {
+            if (plotModel != null && plotModel.Series.Count > 0)
+            {
+                var lastSeries = plotModel.Series[plotModel.Series.Count - 1];
+                lastSeries.IsVisible = true;
+                plotModel.InvalidatePlot(true);
+            }
+        }
+
+        private void Avarage_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (plotModel != null && plotModel.Series.Count > 0)
+            {
+                var lastSeries = plotModel.Series[plotModel.Series.Count - 1];
+                lastSeries.IsVisible = false;
+                plotModel.InvalidatePlot(true);
+            }
+        }
+
         private void DrawGraphic(object sender, RoutedEventArgs e)
         {
-            Program Logic = new Program();
+            IPowAlgorithm[] algorithms = new IPowAlgorithm[]
+                {
+                    new PowStandart(),
+                    new QuickPow(),
+                    new QuickPow1(),
+                    new RecPow()
+                };
 
-            var plotModel = CreatePlotModel();
+            Program Logic = new Program();
+            plotModel.Series.Clear();
+
+            //plotModel = CreatePlotModel();
             //var lineSeries = CreateLineSeries();
 
             // Add the line series to the plot model
             //plotModel.Series.Add(lineSeries);
 
             // Add the axes to the plot model
-            plotModel.Axes.Add(CreateLinearAxis("Time(Sec)", AxisPosition.Left));
-            plotModel.Axes.Add(CreateLinearAxis("Runs", AxisPosition.Bottom));
+            //plotModel.Axes.Add(CreateLinearAxis("Time(Sec)", AxisPosition.Left));
+            //plotModel.Axes.Add(CreateLinearAxis("Runs", AxisPosition.Bottom));
 
             int firstParam = int.Parse(FirstParam.Text);
             int secondParam = int.Parse(SecondParam.Text);
 
-            int function;
-            if(int.TryParse(Function.Text, out function))
-            {
-                if (function == 0 || function > 12)
-                {
-                    MessageBox.Show("Такого алгоритма нет! Выберите от 1 до 12.");
-                }
-                else
-                {
-                    for(int j = 1; j <= secondParam; j++)
-                    {
-                        var lineSeries = CreateLineSeries();
-                        lineSeries.Color = GetColor(j);
+            bool otherVisibility = (bool)Other.IsChecked;
+            bool avarageVisibility = (bool)Avarage.IsChecked;
 
-                        for (int i = (int)0.1; i <= firstParam; i++)
-                        {
-                            int[] vector = Enumerable.Repeat(i, i).ToArray();
-                            double x = 1.5; // Replace this with the appropriate value
-                            double y = Logic.StopWatchFunc(function, vector, x);
-                            lineSeries.Points.Add(new DataPoint(i, y));
-                        }
-                        plotModel.Series.Add(lineSeries);
-                    }
-                }
+            ComboBoxItem selectedItem = (ComboBoxItem)Functions.SelectedItem;
+            if (selectedItem == null)
+            {
+                MessageBox.Show("Выберете алгоритм");
             }
             else
             {
-                MessageBox.Show("Введите число! Выберите от 1 до 12.");
+                string function = selectedItem.Content.ToString();
+                for (int j = 1; j <= secondParam; j++)
+                {
+                    var lineSeries1 = CreateLineSeries();
+                    lineSeries1.Color = GetColor(j, secondParam);
+
+                    for (int i = (int)0.1; i <= firstParam; i++)
+                    {
+                        int[] vector = Enumerable.Repeat(i, i).ToArray();
+                        double x = 1.5; // Replace this with the appropriate value
+                        double y = Logic.StopWatchFunc(function, vector, x, i);
+                        lineSeries1.Points.Add(new DataPoint(i, y));
+                    }
+                    if (function != "Постаянная функция")
+                    {
+                        for (int k = 1; k <= 20; k++)
+                        {
+                            for (int i = 1; i < lineSeries1.Points.Count; i++)
+                            {
+                                var line = lineSeries1.Points;
+                                double first;
+                                if (i == 1)
+                                    first = 0;
+                                else
+                                    first = line[i - 2].Y;
+                                double second = line[i - 1].Y;
+                                double third = line[i].Y;
+                                if ((first * 1.1 < second || second > third * 1.1))
+                                {
+                                    lineSeries1.Points[i - 1] = new DataPoint(line[i - 1].X, (first + third) / 2);
+                                }
+                            }
+                        }
+                    }
+                    plotModel.Series.Add(lineSeries1);
+                    if (!otherVisibility)
+                        plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
+
+                }
+                var lineSeries2 = CreateLineSeries();
+                lineSeries2.Color = OxyColors.Red;
+                int c = 0;
+                foreach (var series in plotModel.Series)
+                {
+                    c++;
+                    var currentLineSeries = ((LineSeries)series).Points;
+                    for (int i = 0; i < currentLineSeries.Count; i++)
+                    {
+                        if (i < lineSeries2.Points.Count )
+                        {
+                            DataPoint point1 = currentLineSeries[i];
+                            DataPoint point2 = lineSeries2.Points[i];
+                            lineSeries2.Points[i] = new DataPoint(point1.X, ((c - 1) * point2.Y + point1.Y) / c);
+                        }
+                        else
+                        {
+                            lineSeries2.Points.Add(new DataPoint(i, currentLineSeries[i].Y));
+                        }
+                    }
+                }
+                plotModel.Series.Add(lineSeries2);
+                if (!avarageVisibility)
+                    plotModel.Series[plotModel.Series.Count - 1].IsVisible = false;
+                UpdatePlotAxes();
+                plotModel.InvalidatePlot(true);
             }
-            // Assign the plot model to the plot view
-            plotView.Model = plotModel;
         }
 
-        private OxyColor GetColor(int index)
+        private void UpdatePlotAxes()
         {
-            switch (index % 8)
+            var lastSeries = (LineSeries)plotModel.Series[plotModel.Series.Count - 1];
+            DataPoint point = lastSeries.Points[lastSeries.Points.Count - 1];
+
+            double minX = 0 - point.X / 10;
+            double maxX = point.X + point.X / 10;
+            double minY = 0 - point.Y / 10;
+            double maxY = point.Y + point.Y / 10;
+
+            plotModel.Axes.Clear(); // Очищаем существующие оси, если нужно
+
+            // Создаем новые оси
+            plotModel.Axes.Add(new LinearAxis {
+                Title = "Runs",
+                Position = AxisPosition.Bottom,
+                Minimum = minX,
+                Maximum = maxX,
+                PositionAtZeroCrossing = true,
+                TickStyle = TickStyle.Crossing,
+                IsAxisVisible = true,
+            });
+            plotModel.Axes.Add(new LinearAxis {
+                Title = "Time(Sec)",
+                Position = AxisPosition.Left,
+                Minimum = minY,
+                Maximum = maxY,
+                PositionAtZeroCrossing = true,
+                TickStyle = TickStyle.Crossing,
+                IsAxisVisible = true,
+            });
+
+            // Обновляем график
+            plotModel.InvalidatePlot(true);
+        }
+
+        private OxyColor GetColor(int index, int count)
+        {
+            if (count <= 1 || index < 1 || index > count)
             {
-                case 1:
-                    return OxyColors.White;
-                case 2:
-                    return OxyColors.Green;
-                case 3:
-                    return OxyColors.Blue;
-                case 4:
-                    return OxyColors.Yellow;
-                case 5:
-                    return OxyColors.Cyan;
-                case 6:
-                    return OxyColors.Magenta;
-                case 7:
-                    return OxyColors.Orange;
-                case 0:
-                    return OxyColors.Purple;
-                default:
-                    return OxyColors.Black;
+                return OxyColors.Yellow;
             }
+
+            OxyColor startColor = OxyColors.Yellow;
+            OxyColor endColor = OxyColors.Green;
+
+            double fraction = (double)(index - 1) / (count - 1);
+
+            return InterpolateColor(startColor, endColor, fraction);
+        }
+
+        private OxyColor InterpolateColor(OxyColor startColor, OxyColor endColor, double fraction)
+        {
+            byte r = (byte)(startColor.R + (endColor.R - startColor.R) * fraction);
+            byte g = (byte)(startColor.G + (endColor.G - startColor.G) * fraction);
+            byte b = (byte)(startColor.B + (endColor.B - startColor.B) * fraction);
+
+            return OxyColor.FromRgb(r, g, b);
         }
 
         private PlotModel CreatePlotModel()
@@ -155,25 +287,35 @@ namespace labinterface
 
         private void GetInformation(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show($"Выбор функции:\n1)Постоянная функция" +
-                $"\n2)Сумма элементов" +
-                $"\n3)Произведение элементов" +
-                $"\n4)Полином" +
-                $"\n5)Метод Горнера" +
-                $"\n6)BubbleSort(Пузырьком) сортировка" +
-                $"\n7)QuickSort(Быстрая) сортировка" +
-                $"\n8)OddEvenSort(Чет-нечет) сортировка" +
-                $"\n9)CombSort(Расческой) сортировка" +
-                $"\n10)MultiplyMatrix(Умножение) матриц" +
-                $"\n11)SelectionSort(Выборкой) сортировка" +
-                $"\n12)PowStandart" +
-                $"\n13)RecPow" +
-                $"\n14)QuickSort" +
-                $"\n15)QuickSort1" +                
+            MessageBox.Show(
+                //$"Выбор функции:\n1)Постоянная функция" +
+                //$"\n2)Сумма элементов" +
+                //$"\n3)Произведение элементов" +
+                //$"\n4)Полином" +
+                //$"\n5)Метод Горнера" +
+                //$"\n6)BubbleSort(Пузырьком) сортировка" +
+                //$"\n7)QuickSort(Быстрая) сортировка" +
+                //$"\n8)OddEvenSort(Чет-нечет) сортировка" +
+                //$"\n9)CombSort(Расческой) сортировка" +
+                //$"\n10)MultiplyMatrix(Умножение) матриц" +
+                //$"\n11)SelectionSort(Выборкой) сортировка" +
+                //$"\n12)TimSort(Вставками + слиянием)  сортировка" +
+                $"\nСтепень - Используется для степенных функций" +
                 $"\nДиапазон - кол-во чисел для исследования функции" +
-                $"\nКол-во запусков - сколько раз запуститься алгоритм" +
-                $"\nАппроксимация дорабатывается" +
-                $"\nСложность для работы с аппроксимацией" );
+                $"\nКол-во запусков - сколько раз запуститься алгоритм"
+                //+ $"\nАппроксимация дорабатывается" +
+                //$"\nСложность для работы с аппроксимацией"
+                );
+        }
+
+        private void ThirdParam_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
+
+        private void FirstParam_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
