@@ -68,10 +68,10 @@
                         <ComboBoxItem Content="BubbleSort"/>
                         <ComboBoxItem Content="QuickSort"/>
                         <ComboBoxItem Content="TimSort"/>
-                        <ComboBoxItem Content="PowStandart"/>
-                        <ComboBoxItem Content="QuickPow"/>
-                        <ComboBoxItem Content="QuickPow1"/>
-                        <ComboBoxItem Content="RecPow"/>
+                        <ComboBoxItem Content="Pow(x,n)"/>
+                        <ComboBoxItem Content="RecPow(x,n)"/>
+                        <ComboBoxItem Content="QuickPow(x,n)"/>
+                        <ComboBoxItem Content="QuickPow1(x,n)"/>
                         <ComboBoxItem Content="Умножение матриц"/>
                         <ComboBoxItem Content="OddEvenSort"/>
                         <ComboBoxItem Content="CombSort"/>

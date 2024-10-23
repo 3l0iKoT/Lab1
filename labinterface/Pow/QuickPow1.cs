@@ -34,10 +34,5 @@ namespace labinterface
             }
             Steps.Add((maxDegree, count));
         }
-
-        public string GetName()
-        {
-            return "QuickPow1";
-        }
     }
 }

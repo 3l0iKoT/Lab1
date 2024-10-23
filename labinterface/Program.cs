@@ -59,19 +59,19 @@ namespace LabLogic
                     int[,] B = MatrixOperations.GenerateRandomMatrix(size); // 2nd matrix generator
                     MatrixOperations.MultiplyMatrices(A, B, size);
                     break;
-                case "PowStandart":
+                case "Pow(x,n)":
                     var algorithm1 = algorithms[0];
                     algorithm1.Run(degree);
                     return algorithm1.Steps[0].Item2;
-                case "QuickPow":
+                case "QuickPow(x,n)":
                     var algorithm2 = algorithms[1];
                     algorithm2.Run(degree);
                     return algorithm2.Steps[0].Item2;
-                case "QuickPow1":
+                case "QuickPow1(x,n)":
                     var algorithm3 = algorithms[2];
                     algorithm3.Run(degree);
                     return algorithm3.Steps[0].Item2;
-                case "RecPow":
+                case "RecPow(x,n)":
                     var algorithm4 = algorithms[3];
                     algorithm4.Run(degree);
                     return algorithm4.Steps[0].Item2;

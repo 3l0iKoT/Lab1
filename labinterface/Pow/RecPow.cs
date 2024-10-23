@@ -41,10 +41,5 @@ namespace labinterface
             }
             return f;
         }
-
-        public string GetName()
-        {
-            return "RecPow";
-        }
     }
 }

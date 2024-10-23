@@ -22,10 +22,5 @@ namespace labinterface
             }
             Steps.Add((maxDegree, stepCount));
         }
-
-        public string GetName()
-        {
-            return "PowStandart";
-        }
     }
 }
